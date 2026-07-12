@@ -953,6 +953,7 @@
     }
     @media (max-width:640px) {
       .hero .scroll-hint { display: none; }   /* 避免與標題重疊 */
+      footer { flex-direction: column; align-items: center; text-align: center; gap: 10px; }
     }
   </style>
 </head>
@@ -1137,7 +1138,7 @@
       // 行走的人影
       let hikerX = null;   /* 首次繪製時直接出現在畫面中 */
       function drawHiker(t) {
-        if (hikerX === null) hikerX = W * 0.3;
+        if (hikerX === null) hikerX = W * 0.1;
         hikerX += 0.187;   /* 步速：原本 0.22 的 0.85 倍 */
         if (hikerX > W + 80) hikerX = -80;
         const gy = ridgeY(hikerX) - 1;
