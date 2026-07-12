@@ -942,6 +942,18 @@
         display: none
       }
     }
+
+    /* ---------- 手機版微調 ---------- */
+    @media (max-width:760px) {
+      .about-inner { grid-template-columns: 1fr; gap: 34px; }
+      .about-photo { width: min(72vw, 280px); margin: 0 auto; }
+      .about-text p { max-width: 30ch; font-size: 16px; }
+      .about-text p+p { margin-top: .7em; }
+      .contact-row { margin-top: 26px; }
+    }
+    @media (max-width:640px) {
+      .hero .scroll-hint { display: none; }   /* 避免與標題重疊 */
+    }
   </style>
 </head>
 
@@ -1123,9 +1135,10 @@
       }
 
       // 行走的人影
-      let hikerX = -60;
+      let hikerX = null;   /* 首次繪製時直接出現在畫面中 */
       function drawHiker(t) {
-        hikerX += 0.175;   /* 步速：原本 0.22 */
+        if (hikerX === null) hikerX = W * 0.3;
+        hikerX += 0.187;   /* 步速：原本 0.22 的 0.85 倍 */
         if (hikerX > W + 80) hikerX = -80;
         const gy = ridgeY(hikerX) - 1;
         const s = 1.3;                            // 比例（調大剪影更明顯）
