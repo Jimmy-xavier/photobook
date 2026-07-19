@@ -945,15 +945,147 @@
 
     /* ---------- 手機版微調 ---------- */
     @media (max-width:760px) {
-      .about-inner { grid-template-columns: 1fr; gap: 34px; }
-      .about-photo { width: min(72vw, 280px); margin: 0 auto; }
-      .about-text p { max-width: 30ch; font-size: 16px; }
-      .about-text p+p { margin-top: .7em; }
-      .contact-row { margin-top: 26px; }
+      .about-inner {
+        grid-template-columns: 1fr;
+        gap: 34px;
+      }
+
+      .about-photo {
+        width: min(72vw, 280px);
+        margin: 0 auto;
+      }
+
+      .about-text p {
+        max-width: 30ch;
+        font-size: 16px;
+      }
+
+      .about-text p+p {
+        margin-top: .7em;
+      }
+
+      .contact-row {
+        margin-top: 26px;
+      }
     }
+
     @media (max-width:640px) {
-      .hero .scroll-hint { display: none; }   /* 避免與標題重疊 */
-      footer { flex-direction: column; align-items: center; text-align: center; gap: 10px; }
+      .hero .scroll-hint {
+        display: none;
+      }
+
+      /* 避免與標題重疊 */
+      footer {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 10px;
+      }
+    }
+
+    /* ---------- 圖說 ---------- */
+    .book-controls>button.cap-toggle {
+      width: auto;
+      height: 46px;
+      border-radius: 999px;
+      padding: 0 24px;
+      border: 1px solid var(--hairline);
+      background: none;
+      color: var(--mist);
+      font-family: var(--serif-tc);
+      font-weight: 300;
+      font-size: 15px;
+      letter-spacing: .18em;
+      line-height: 1;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition: .3s;
+    }
+
+    .book-controls>button.cap-toggle:hover {
+      color: var(--snow);
+      border-color: var(--ice)
+    }
+
+    .book-controls>button.cap-toggle.active {
+      background: var(--ice);
+      color: var(--ink);
+      border-color: var(--ice)
+    }
+
+    .caption-row {
+      display: none;
+      justify-content: center;
+      gap: 36px;
+      margin: 18px auto 0;
+      max-width: 1080px;
+      min-height: 1.7em;
+    }
+
+    .caption-row.on {
+      display: flex
+    }
+
+    .caption-row span {
+      flex: 1;
+      text-align: center;
+      font-size: 17px;
+      letter-spacing: .14em;
+      color: #D7E2EA;
+      padding: 0 12px;
+    }
+
+    .book-stage.single #capR {
+      display: none
+    }
+
+    /* ---------- 關於區：文字藥丸按鈕 ---------- */
+    .pill-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 52px;
+      padding: 0 34px;
+      border-radius: 999px;
+      border: 1px solid var(--ice-dim);
+      color: var(--ice);
+      font-family: "Cormorant Garamond", "Noto Serif TC", serif;
+      font-size: 15.5px;
+      letter-spacing: .26em;
+      text-indent: .26em;
+      text-decoration: none;
+      transition: .3s;
+    }
+
+    .pill-btn:hover,
+    .pill-btn:focus-visible {
+      border-color: var(--ice);
+      background: rgba(169, 199, 218, .08);
+      transform: translateY(-2px);
+    }
+
+    .pill-btn.solid {
+      background: var(--ice);
+      color: var(--ink);
+      border-color: var(--ice)
+    }
+
+    .pill-btn.solid:hover {
+      background: #C6DCEA
+    }
+
+    @media (max-width:480px) {
+      .contact-row {
+        flex-wrap: wrap;
+        gap: 14px
+      }
+
+      .pill-btn {
+        height: 48px;
+        padding: 0 26px;
+        font-size: 14px
+      }
     }
   </style>
 </head>
@@ -983,7 +1115,7 @@
 
     <div class="title-block">
       <p class="eyebrow">Curated by Jimmy</p>
-      <h1>被平放的時間</h1>
+      <h1>平放的時間</h1>
       <p class="sub">那些被留在平面上的</p>
     </div>
 
@@ -1014,6 +1146,10 @@
         <div class="single-media" id="singleMedia"></div>
       </div>
 
+      <div class="caption-row" id="captionRow">
+        <span id="capL"></span><span id="capR"></span>
+      </div>
+
       <div class="book-controls">
         <button id="prevBtn" aria-label="上一頁">‹</button>
         <span class="indicator" id="pageIndicator">封面</span>
@@ -1022,6 +1158,7 @@
           <button id="modeSingle" class="active" aria-label="單面檢視">單</button>
           <button id="modeDouble" aria-label="雙面檢視">雙</button>
         </div>
+        <button id="capBtn" class="cap-toggle" aria-pressed="false" title="顯示圖說">圖說</button>
       </div>
 
       <div class="map-block" id="mapBlock">
@@ -1048,15 +1185,10 @@
         <p>累了就來這裡休息一下，回味自己走過的地方。</p>
         <p>最近喜歡攀岩！</p>
         <div class="contact-row">
-          <!-- 把 href 換成你自己的連結 -->
-          <a class="icon-btn" href="https://www.instagram.com/chun_wei_0105/" target="_blank" rel="noopener"
-            aria-label="Instagram" title="Instagram">
-            <svg viewBox="0 0 24 24">
-              <rect x="3.5" y="3.5" width="17" height="17" rx="5" />
-              <circle cx="12" cy="12" r="3.8" />
-              <circle cx="17" cy="7" r="1.1" fill="currentColor" stroke="none" />
-            </svg>
-          </a>
+          <!-- TOPO 的 href 換成你的遊記網站網址；沒加 target="_blank" 所以會在同一個分頁直接切換 -->
+          <a class="pill-btn" href="https://www.instagram.com/chun_wei_0105/" target="_blank" rel="noopener"
+            aria-label="Instagram">INSTAGRAM</a>
+          <a class="pill-btn solid" href="https://jimmy-xavier.github.io/topo" aria-label="遊記 TOPO">遊記 TOPO</a>
         </div>
       </div>
     </div>
@@ -1073,6 +1205,9 @@
     <span class="brand">Sanctum Sanctorum</span>
     <span class="fine">© 2026 — 林鈞唯 Jimmy Lin</span>
   </footer>
+
+  <!-- 書籍資料：新增書、圖說、地點都改 books.js 就好 -->
+  <script src="books.js"></script>
 
   <script>
     /* ==========================================================
@@ -1330,30 +1465,7 @@
        ◆ folder / pages 皆為空時顯示示範內頁；內頁建議偶數張，雙面跨頁才完整
        ◆ 每本書有獨立網址：#book1-1（第 1 個主題的第 1 本）、#book2-1…
        ========================================================== */
-    const COLLECTIONS = [
-      {
-        en: 'Vol. I', title: '日本東北', books: [
-          {
-            title: '御釜', folder: 'vol1_okama', count: 14, ratio: 1, pages: [],
-            tint: ['#16222F', '#0C141F', 'rgba(169,199,218,.24)'],
-            places: [
-              { name: '御釜', lat: 38.14, lng: 140.44, page: 1 },
-            ]
-          },
-        ]
-      },
-      {
-        en: 'Vol. II', title: 'The Last Summer', books: [
-          {
-            title: '瑞士策馬特', folder: '', count: 0, ratio: 1, pages: ['vol2_zermatt/cover.jpg', 'vol2_zermatt/p01.jpg', 'vol2_zermatt/p02.jpg', 'vol2_zermatt/p03.jpg', 'vol2_zermatt/p04.mp4', 'vol2_zermatt/p05.mp4', 'vol2_zermatt/p06.jpg', 'vol2_zermatt/back.jpg'],
-            tint: ['#1B2620', '#0E1512', 'rgba(168,196,178,.24)'],
-            places: [
-              { name: 'Zermatt', lat: 45.98, lng: 7.76 },
-            ]
-          },
-        ]
-      },
-    ];
+    /* 書籍資料 COLLECTIONS 已移至 books.js */
 
     /* 點陣世界地圖資料：240×107 網格（經度每 1.5°、緯度 75°N～85.5°S，含南極洲），
        由真實海岸線資料預先計算、壓成 base64，不需載入任何外部圖資 */
@@ -1483,16 +1595,29 @@
         activeCol = clamp(ci, 0, COLLECTIONS.length - 1);
         activeIdx = clamp(bi, 0, COLLECTIONS[activeCol].books.length - 1);
         book = COLLECTIONS[activeCol].books[activeIdx];
-        /* folder + count → 自動組出 cover / p01~pNN / back 的路徑 */
+        /* folder + count → 自動組出 cover / p01~pNN / back 的路徑
+           clips 可指定某頁為影片，例如 {4:'mp4'} → p04.mp4 */
         if (!book.pages.length && book.folder && book.count) {
           const f = book.folder.replace(/\/$/, '');
+          const clips = book.clips || {};
           book.pages = [
             f + '/cover.jpg',
-            ...Array.from({ length: book.count }, (_, k) => f + '/p' + String(k + 1).padStart(2, '0') + '.jpg'),
+            ...Array.from({ length: book.count }, (_, k) => f + '/p' + String(k + 1).padStart(2, '0') + '.' + (clips[k + 1] || 'jpg')),
             f + '/back.jpg'
           ];
         }
-        pages = book.pages.length ? book.pages.slice() : placeholderPages(book);
+        /* 統一為 {src, caption} 格式，並套用 captions 設定 */
+        const caps = book.captions || {};
+        const raw = book.pages.length ? book.pages.slice() : placeholderPages(book);
+        pages = raw.map((pg, i) => {
+          const o = (typeof pg === 'string') ? { src: pg, caption: '' } : { src: pg.src, caption: pg.caption || '' };
+          if (!o.caption) {
+            if (i === 0 && caps.cover) o.caption = caps.cover;
+            else if (i === raw.length - 1 && caps.back) o.caption = caps.back;
+            else if (caps[i]) o.caption = caps[i];
+          }
+          return o;
+        });
         sIdx = 0; curSingleSrc = null;
         bookSize(); build(); buildMenu(); updateMapPlaces();
         /* 更新網址（某些環境如直接開本機檔案可能不允許，失敗就略過） */
@@ -1526,9 +1651,9 @@
           s.className = 'sheet';
           const f = document.createElement('div'); f.className = 'face front';
           const b = document.createElement('div'); b.className = 'face back';
-          f.appendChild(makeMedia(pages[i * 2], pageLabel(i * 2)));
+          f.appendChild(makeMedia(pages[i * 2].src, pageLabel(i * 2)));
           if (pages[i * 2 + 1]) {
-            b.appendChild(makeMedia(pages[i * 2 + 1], pageLabel(i * 2 + 1)));
+            b.appendChild(makeMedia(pages[i * 2 + 1].src, pageLabel(i * 2 + 1)));
           }
           f.insertAdjacentHTML('beforeend', '<div class="shade"></div>');
           b.insertAdjacentHTML('beforeend', '<div class="shade"></div>');
@@ -1555,11 +1680,12 @@
       }
       function update() {
         const N = pages.length, M = N - 2;
+        updateCaptions();
         if (mode === 'single') {
-          if (curSingleSrc !== pages[sIdx]) {
+          if (curSingleSrc !== pages[sIdx].src) {
             singleMedia.innerHTML = '';
-            singleMedia.appendChild(makeMedia(pages[sIdx], pageLabel(sIdx)));
-            curSingleSrc = pages[sIdx];
+            singleMedia.appendChild(makeMedia(pages[sIdx].src, pageLabel(sIdx)));
+            curSingleSrc = pages[sIdx].src;
           }
           indicator.textContent = (sIdx === 0 || sIdx === N - 1)
             ? pageLabel(sIdx)
@@ -1625,6 +1751,32 @@
       btnSingle.addEventListener('click', () => setMode('single'));
       btnDouble.addEventListener('click', () => setMode('double'));
 
+      /* ---------- 圖說開關 ---------- */
+      let capsOn = false;
+      const capBtn = document.getElementById('capBtn');
+      const captionRow = document.getElementById('captionRow');
+      const capL = document.getElementById('capL'), capR = document.getElementById('capR');
+      capBtn.addEventListener('click', () => {
+        capsOn = !capsOn;
+        capBtn.classList.toggle('active', capsOn);
+        capBtn.setAttribute('aria-pressed', capsOn);
+        captionRow.classList.toggle('on', capsOn);
+        updateCaptions();
+      });
+      function updateCaptions() {
+        if (!capsOn) return;
+        if (mode === 'single') {
+          capL.textContent = pages[sIdx].caption || '';
+          capR.textContent = '';
+        } else if (current === 0) {
+          capL.textContent = ''; capR.textContent = pages[0].caption || '';
+        } else {
+          const li = current * 2 - 1, ri = current * 2;
+          capL.textContent = (pages[li] && pages[li].caption) || '';
+          capR.textContent = (pages[ri] && pages[ri].caption) || '';
+        }
+      }
+
       /* 單面模式：單擊左右半翻頁；快速點兩下開啟光箱放大檢視 */
       let clickTimer = null;
       singleView.addEventListener('click', e => {
@@ -1644,7 +1796,7 @@
       /* ---------- 光箱：放大檢視照片細節 ---------- */
       function openLightbox() {
         lbMedia.innerHTML = '';
-        const el = makeMedia(pages[sIdx], pageLabel(sIdx));
+        const el = makeMedia(pages[sIdx].src, pageLabel(sIdx));
         lbMedia.appendChild(el);
         lightbox.hidden = false;
         document.body.style.overflow = 'hidden';
