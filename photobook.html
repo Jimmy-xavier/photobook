@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>攝影書 — curated by Jimmy</title>
+
+  <!-- ============================================================
+       SEO 與社群分享設定
+       ▸ 把下面的網址、描述、og:image 換成你自己的：
+         - og:url        你的網站網址
+         - og:image      分享時顯示的預覽圖（建議 1200×630，放一張代表作，用完整網址）
+       ▸ 換好後，貼到 LINE/FB/IG 就會出現漂亮的預覽卡片
+  ============================================================ -->
+  <meta name="description" content="Chrono — 林鈞唯 Jimmy 的攝影書。收藏山與光影之間的片刻，線上翻閱。">
+  <meta name="author" content="Jimmy Lin 林鈞唯">
+  <meta name="theme-color" content="#0C141F">
+  <link rel="canonical" href="https://jimmy-xavier.github.io/">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="攝影書 — curated by Jimmy">
+  <meta property="og:description" content="收藏山與光影之間的片刻，線上翻閱。">
+  <meta property="og:url" content="https://jimmy-xavier.github.io/">
+  <meta property="og:image" content="https://jimmy-xavier.github.io/profile.jpg">
+  <meta property="og:locale" content="zh_TW">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="攝影書 — curated by Jimmy">
+  <meta name="twitter:description" content="收藏山與光影之間的片刻，線上翻閱。">
+  <meta name="twitter:image" content="https://jimmy-xavier.github.io/profile.jpg">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- ============================================================
+  攝影書網站模板
+  ------------------------------------------------------------
+  ◆ 首頁動態場景：目前是 Canvas 繪製的「雪山漫步」動畫（雪、霧、山稜、行走的人影）。
+    之後要換成你的影片時：
+      1. 找到下方 <section class="hero"> 裡標示【影片替換區】的註解
+      2. 把 <canvas id="scene"> 註解掉，打開 <video> 那段
+      3. 影片建議：5–10 秒、H.264 mp4、1080p、壓到 5MB 以內、loop + muted + autoplay + playsinline
+
+  ◆ 電子書翻頁：
+      每頁一張正方形 JPG，命名規則：cover.jpg（封面）、p01.jpg～pNN.jpg（內頁）、back.jpg（封底），
+      放進資料夾後在 COLLECTIONS 設定 folder 與 count 即可，詳見翻頁書程式碼開頭的說明。
+============================================================ -->
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Noto+Serif+TC:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+  <!-- 開場載入畫面：資源就緒後淡出 -->
+  <div id="preloader"><span class="pl-mark">Chrono</span></div>
+
+
+  <nav class="nav">
+    <a class="brand" href="#top">Chrono</a>
+    <div class="links">
+      <a href="#book">攝影書</a>
+      <a href="#about">關於</a>
+    </div>
+  </nav>
+
+  <!-- ============ 首頁：雪山漫步 ============ -->
+  <section class="hero" id="top">
+
+    <canvas id="scene" aria-label="雪山中行走的動態場景"></canvas>
+
+    <!-- 【影片替換區】之後換成你的影片時，把上面的 canvas 註解掉，打開下面這段：
+  <video autoplay muted loop playsinline poster="cover.jpg">
+    <source src="your-video.mp4" type="video/mp4">
+  </video>
+  -->
+
+    <div class="veil"></div>
+
+    <div class="title-block">
+      <p class="eyebrow">Curated by Jimmy</p>
+      <h1>平放的時間</h1>
+      <p class="sub">那些留在平面上的</p>
+    </div>
+
+    <div class="scroll-hint">SCROLL</div>
+  </section>
+
+  <!-- ============ 翻頁攝影書 ============ -->
+  <section class="section" id="book">
+    <div class="sec-head">
+      <p class="eyebrow">Moments</p>
+      <h2>穿梭</h2>
+      <p>單面模式｜點照片右半往後、左半往前。</p>
+      <p>雙面模式｜模擬書本翻頁，可以直接按住書頁拖曳。</p>
+      <p>※兩種模式都支援鍵盤方向鍵，上方選單可切換書冊。</p>
+    </div>
+
+    <div class="book-menu" id="bookMenu">
+      <button class="menu-trigger" id="menuTrigger" aria-haspopup="true" aria-expanded="false"></button>
+      <div class="menu-panel" id="menuPanel" role="menu"></div>
+    </div>
+
+    <div class="book-stage" id="bookStage">
+      <div class="book-wrap">
+        <div class="book" id="bookEl" aria-label="可翻頁的攝影書"></div>
+      </div>
+
+      <div class="single-view" id="singleView">
+        <div class="single-media" id="singleMedia"></div>
+      </div>
+
+      <div class="caption-row" id="captionRow">
+        <span id="capL"></span><span id="capR"></span>
+      </div>
+
+      <div class="book-controls">
+        <button id="prevBtn" aria-label="上一頁">‹</button>
+        <span class="indicator" id="pageIndicator">封面</span>
+        <button id="nextBtn" aria-label="下一頁">›</button>
+        <div class="mode-toggle" role="group" aria-label="檢視模式">
+          <button id="modeSingle" class="active" aria-label="單面檢視">單</button>
+          <button id="modeDouble" aria-label="雙面檢視">雙</button>
+        </div>
+        <button id="capBtn" class="cap-toggle" aria-pressed="false" title="顯示圖說">圖說</button>
+      </div>
+
+      <div class="map-block" id="mapBlock">
+        <p class="map-title"><span class="en">Where I've Been</span></p>
+        <canvas id="worldMap" aria-label="這本書拍攝地點的世界地圖"></canvas>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ============ 關於 ============ -->
+  <section class="section about" id="about">
+    <div class="about-inner">
+      <figure class="about-photo">
+        <!-- 換成你的照片：把下一行 src 改成你的檔名（建議直式 4:5 構圖）。
+           照片成功載入後，佔位文字會自動被蓋掉；找不到檔案時則顯示佔位。 -->
+        <img src="profile.jpg" alt="關於我" onerror="this.style.display='none'">
+        <figcaption class="ph">你的照片<br>images/about.jpg</figcaption>
+      </figure>
+      <div class="about-text">
+        <p>謝謝你點進來！</p>
+        <p>我喜歡拍照，也喜歡出去玩，這裡是我的秘密基地。</p>
+        <p>累了就來這裡休息一下，回味自己走過的地方。</p>
+        <p>最近喜歡攀岩！</p>
+        <div class="contact-row">
+          <!-- TOPO 的 href 換成你的遊記網站網址；沒加 target="_blank" 所以會在同一個分頁直接切換 -->
+          <a class="pill-btn" href="https://www.instagram.com/chun_wei_0105/" target="_blank" rel="noopener"
+            aria-label="Instagram">INSTAGRAM</a>
+          <a class="pill-btn solid" href="https://jimmy-xavier.github.io/topo/" aria-label="遊記 TOPO">遊記 TOPO</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 光箱：單面模式快速點兩下開啟，點照片可放大細節 -->
+  <div class="lightbox" id="lightbox" hidden>
+    <button class="lb-close" id="lbClose" aria-label="關閉">×</button>
+    <div class="lb-media" id="lbMedia"></div>
+    <p class="lb-hint">點照片可放大細節・點空白處或按 Esc 關閉</p>
+  </div>
+
+  <footer>
+    <span class="brand">Sanctum Sanctorum</span>
+    <span class="fine">© 2026 — 林鈞唯 Jimmy Lin</span>
+  </footer>
+
+  <!-- 書籍資料：新增書、圖說、地點都改 books.js 就好 -->
+  <script src="books.js"></script>
+
+  <script src="app.js"></script>
+  <script>
+    /* ---------- 開場載入畫面：頁面與字型就緒後淡出 ---------- */
+    (function () {
+      const pre = document.getElementById('preloader');
+      if (!pre) return;
+      let done = false;
+      const finish = () => {
+        if (done) return; done = true;
+        pre.classList.add('done');
+        setTimeout(() => pre.remove(), 900);
+      };
+      const ready = () => {
+        // 等字型載入完成，避免文字閃爍（FOUT）；最多等 2.5 秒保底
+        const fonts = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+        Promise.race([fonts, new Promise(r => setTimeout(r, 2500))]).then(() => setTimeout(finish, 250));
+      };
+      if (document.readyState === 'complete') ready();
+      else window.addEventListener('load', ready);
+      setTimeout(finish, 4000);   // 最終保底，無論如何都會離開載入畫面
+    })();
+
+    /* ---------- 分頁切到背景時暫停首頁動畫，省電省效能 ---------- */
+    (function () {
+      document.addEventListener('visibilitychange', () => {
+        document.documentElement.dataset.hidden = document.hidden ? '1' : '';
+      });
+    })();
+  </script>
+
+</body>
+
+
+
+</html>
