@@ -926,6 +926,10 @@
     @media (max-width:640px) {
       .hero .scroll-hint { display: none; }   /* 避免與標題重疊 */
       footer { flex-direction: column; align-items: center; text-align: center; gap: 10px; }
+      /* 控制列：窄螢幕自動換行成兩排（箭頭＋頁碼一排、單雙＋圖說一排） */
+      .book-controls { flex-wrap: wrap; gap: 14px 20px; }
+      .book-controls > * { flex-shrink: 0; }
+      .book-controls .indicator { min-width: 0; font-size: 15px; white-space: nowrap; }
     }
 
     /* ---------- 圖說 ---------- */
@@ -981,6 +985,12 @@
       transition: opacity .8s ease, visibility .8s;
     }
     #preloader.done { opacity: 0; visibility: hidden; }
+    #preloader { flex-direction: column; gap: 22px; display: grid; place-items: center; }
+    #preloader .pl-icon {
+      width: 72px; height: 72px; border-radius: 16px;
+      animation: plfade 2s ease-in-out infinite;
+      user-select: none; -webkit-user-select: none;
+    }
     #preloader .pl-mark {
       font-family: "Cormorant Garamond", serif; letter-spacing: .5em;
       text-indent: .5em; font-size: 16px; color: var(--ice);
@@ -988,5 +998,5 @@
     }
     @keyframes plfade { 0%, 100% { opacity: .3 } 50% { opacity: 1 } }
     @media (prefers-reduced-motion: reduce) {
-      #preloader .pl-mark { animation: none; opacity: .8 }
+      #preloader .pl-mark, #preloader .pl-icon { animation: none; opacity: .8 }
     }
